@@ -18,12 +18,16 @@ import com.badlogic.gdx.math.Vector2
 
 class Player(var x: Float = 0f, var y: Float = 0f) {
 
+    // HashMap to hold Anim objects
     private var animations: HashMap<String, Anim> = HashMap()
 
+    // SpriteBatch for rendering the Player's animations
     private var spriteBatch: SpriteBatch = SpriteBatch()
 
+    // Holds the animation to play when rendering
     private var currentAnimation: Anim
 
+    // Player states, two currently not implemented due to lack of animations
     val stateIdle = 0
     val stateLeft = 1
     val stateRight = 2
@@ -32,19 +36,23 @@ class Player(var x: Float = 0f, var y: Float = 0f) {
     val stateAttack = 5
     val stateHit = 6
 
+    // Current state
     var state = 0
 
+    // Player velocity
     var velocity = Vector2()
 
     init {
+        // Retrieve the animations files as a list
         val files: List<FileHandle> = Gdx.files.internal("anim/player/").list().filter {
             it.extension() == "atlas"
         }
+        // Loop over files and create Anims
         for (file: FileHandle in files) {
             animations[file.nameWithoutExtension()] = Anim(file.name(), 1/10f)
             Gdx.app.log("INFO", "Created Animation  ${file.nameWithoutExtension()}")
         }
-
+        // Sets current animation to
         currentAnimation = animations["idle"]!!
     }
 
@@ -56,21 +64,27 @@ class Player(var x: Float = 0f, var y: Float = 0f) {
 
     fun update(combined: Matrix4) {
 
-        this.x += velocity.x * Gdx.graphics.deltaTime
-        this.y += velocity.y * Gdx.graphics.deltaTime
-        // Gdx.app.log("Info", "State: $state")
+        // Updates players position
+        this.x += velocity.x
+        this.y += velocity.y
 
+        // Sets current animations based on current state
         currentAnimation = when(state) {
-            0 -> animations["idle"]!!
-            1 -> animations["walkLeft"]!!
-            2 -> animations["walkRight"]!!
-            3 -> animations["walkUp"]!!
-            4 -> animations["walkDown"]!!
+            stateIdle -> animations["idle"]!!
+            stateLeft -> animations["walkLeft"]!!
+            stateRight -> animations["walkRight"]!!
+            stateUp -> animations["walkUp"]!!
+            stateDown -> animations["walkDown"]!!
             else -> animations["idle"]!!
         }
 
+        // Sets spriteBatch's proj matrix to the one passed in, from camera
         spriteBatch.projectionMatrix = combined
+
         spriteBatch.begin()
+
+        // Draw the next frame of the animations at Player's x and y, offsetting for the size of the
+        // sprites
         spriteBatch.draw(currentAnimation.getNextFrame(), this.x - 8, this.y - 8)
         spriteBatch.end()
     }
@@ -80,6 +94,7 @@ class Player(var x: Float = 0f, var y: Float = 0f) {
      */
 
     fun dispose() {
+        animations.forEach {(_, value) -> value.dispose()}
         spriteBatch.dispose()
     }
 }

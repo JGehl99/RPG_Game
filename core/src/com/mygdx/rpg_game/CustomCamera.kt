@@ -20,6 +20,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera
 
 class CustomCamera(vpWidth: Float, vpHeight: Float, private var player: Player): OrthographicCamera() {
 
+    // Set camera position, multiply width by screen resolution ratio to properly scale the tiles
     init {
         this.setToOrtho(
             false,
