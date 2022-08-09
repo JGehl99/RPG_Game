@@ -9,6 +9,7 @@ class AndroidLauncher : AndroidApplication() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val config = AndroidApplicationConfiguration()
+        config.a = 1
         initialize(MainGameClass(), config)
     }
 }
