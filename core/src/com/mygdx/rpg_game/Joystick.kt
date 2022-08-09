@@ -85,8 +85,8 @@ class Joystick(private val player: Player) : InputProcessor {
             directionVec.nor()
 
             // Scale direction vec and adjust the player's velocity accordingly
-            player.velocity.x = directionVec.x * 16f * 5
-            player.velocity.y = -directionVec.y * 16f * 5
+            player.velocity.x = directionVec.x * 1.5f
+            player.velocity.y = -directionVec.y * 1.5f
 
             // Create two direction vectors in an x shape to define the sections for different animations
             val a = Vector2(1f, 1f)
@@ -136,9 +136,9 @@ class Joystick(private val player: Player) : InputProcessor {
         if (isTouched) {
 
             // Define circle radii and maxDist for the small circle to travel
-            val largeCircleRadius = 200f
-            val smallCircleRadius = 50f
-            val maxDist = largeCircleRadius - smallCircleRadius / 2f
+            val largeCircleRadius = 100f
+            val smallCircleRadius = 25f
+            val maxDist = largeCircleRadius - smallCircleRadius
 
             // Create a Vector2 to store the location of the smallCircle relative to the centre of
             // the largeCircle, clamp from -maxDist to maxDist
@@ -157,15 +157,17 @@ class Joystick(private val player: Player) : InputProcessor {
 
             // Set colour(rgba) of first circle and draw it
             shapeRenderer.color = Color(0.5f, 0.5f, 0.5f, 0.4f)
-            shapeRenderer.circle(origPoint.x, (Gdx.graphics.height.toFloat() - origPoint.y), 200f)
+            shapeRenderer.circle(
+                origPoint.x,
+                Gdx.graphics.height.toFloat() - origPoint.y,
+                largeCircleRadius)
 
             // Set colour(rgba) of second circle and draw it
-            shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
             shapeRenderer.color = Color(0.1f, 0.1f, 0.1f, 0.5f)
             shapeRenderer.circle(
                 origPoint.x + relativeSmallCircleVector2.x,
-                (Gdx.graphics.height.toFloat() - (origPoint.y + relativeSmallCircleVector2.y)),
-                50f
+                Gdx.graphics.height.toFloat() - (origPoint.y + relativeSmallCircleVector2.y),
+                smallCircleRadius
             )
             shapeRenderer.end()
             Gdx.gl.glDisable(GL20.GL_BLEND)
