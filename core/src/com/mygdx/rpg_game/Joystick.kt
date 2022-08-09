@@ -96,20 +96,20 @@ class Joystick(private val player:Player): InputProcessor {
     fun render() {
         if(isTouched) {
 
-            val largeCircleRadius = 200f
-            val smallCircleRadius = 50f
-            val maxDist = largeCircleRadius - smallCircleRadius/2f
+            val largeCircleRadius = 100f
+            val smallCircleRadius = 25f
+            val maxDist = largeCircleRadius - smallCircleRadius
 
             val relativeSmallCircleVector2 = Vector2(currentPoint.x - origPoint.x, currentPoint.y - origPoint.y).clamp(-maxDist, maxDist)
 
             Gdx.gl.glEnable(GL20.GL_BLEND)
             Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA)
 
-            shapeRenderer.color = Color(0.5f, 0.5f, 0.5f, 0.4f)
+            shapeRenderer.color = Color(0.4f, 0.4f, 0.4f, 0.7f)
             shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
-            shapeRenderer.circle(origPoint.x, (Gdx.graphics.height.toFloat() - origPoint.y), 200f)
-            shapeRenderer.color = Color(0.1f, 0.1f, 0.1f, 0.5f)
-            shapeRenderer.circle(origPoint.x + relativeSmallCircleVector2.x, (Gdx.graphics.height.toFloat() - (origPoint.y + relativeSmallCircleVector2.y)), 50f)
+            shapeRenderer.circle(origPoint.x, (Gdx.graphics.height.toFloat() - origPoint.y), largeCircleRadius)
+            shapeRenderer.color = Color(0.0f, 0.0f, 0.0f, 0.5f)
+            shapeRenderer.circle(origPoint.x + relativeSmallCircleVector2.x, (Gdx.graphics.height.toFloat() - (origPoint.y + relativeSmallCircleVector2.y)), smallCircleRadius)
             shapeRenderer.end()
             Gdx.gl.glDisable(GL20.GL_BLEND)
         }
