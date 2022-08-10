@@ -12,18 +12,16 @@ class Joystick(private val player: Player) : InputProcessor {
 
     // Flag to check if the user has kept their finger on the screen and dragged
     private var isTouched = false
-
-    // Holds coords of original touch point
-    private var origPoint: Vector2 = Vector2()
-
-    // Holds coords of current touch point
-    private var currentPoint: Vector2 = Vector2()
-
-    // Direction Vector from origPoint to currentPoint
-    private var directionVec: Vector2 = Vector2()
-
-    // ShapeRenderer to draw circles for joystick
+    private var origPoint: Vector2 = Vector2()//pos of initial touch
+    private var currentPoint: Vector2 = Vector2()//pos of current touch
+    private var oToCurrent: Vector2 = Vector2()//vector from origPoint to currentPoint
     private var shapeRenderer: ShapeRenderer = ShapeRenderer()
+    private var largeCircleRadius = 200f
+    private var smallCircleRadius = 25f
+
+    private var deadzoneThreshold = 0.3f
+    private var deadzoneRadius = deadzoneThreshold * largeCircleRadius
+    private var outerRecip = 1.0f / (largeCircleRadius - deadzoneRadius)
 
     // Function to handle adding this Joystick as an InputProcessor
     fun addInputProcessors(multiplexer: InputMultiplexer) {
@@ -78,42 +76,43 @@ class Joystick(private val player: Player) : InputProcessor {
             // Create Vector2 to hold the current touch point
             currentPoint = Vector2(screenX.toFloat(), screenY.toFloat())
 
-            // Create direction Vector2 between origPoint and currentPoint
-            directionVec = currentPoint.cpy().sub(origPoint)
 
-            // Normalize vector
-            directionVec.nor()
+            oToCurrent = currentPoint.cpy().sub(origPoint)
+            var o2cMag = oToCurrent.len()
 
-            // Scale direction vec and adjust the player's velocity accordingly
-            player.velocity.x = directionVec.x * 1.5f
-            player.velocity.y = -directionVec.y * 1.5f
+            //generate velocity scalar
+            var velocityScalar: Float = if(o2cMag > largeCircleRadius){
+                1f
+            }else{
+                (0.5f * (o2cMag - deadzoneRadius) + 0.5f * kotlin.math.abs(o2cMag - deadzoneRadius)) * outerRecip
+            }
 
-            // Create two direction vectors in an x shape to define the sections for different animations
-            val a = Vector2(1f, 1f)
-            val b = Vector2(1f, -1f)
+            val scalingFactor = 1.0f/o2cMag
+            player.velocity.x = oToCurrent.x * scalingFactor * velocityScalar * player.maxVelocity
+            player.velocity.y = -oToCurrent.y * scalingFactor * velocityScalar * player.maxVelocity
 
-            // Calculate dot products a.directionVec and b.directionVec
-            val aDotDir = a.dot(directionVec)
-            val bDotDir = b.dot(directionVec)
+            // Gdx.app.log("INFO", "Player Velocity: ${player.velocity}")
 
-            // + + = moving right
-            // + - = moving down
-            // - + = moving up
-            // - - = moving left
+            val a = Vector2(1f, -1f)//up-right
+            val b = Vector2(1f, 1f)//down-right
+
+            val aDotDir = a.dot(oToCurrent)
+            val bDotDir = b.dot(oToCurrent)
+
             when (true) {
-                (aDotDir >= 0f && bDotDir >= 0) -> {
+                (aDotDir >= 0f && bDotDir >=0) -> {
                     player.state = player.stateRight
                 }
                 (aDotDir >= 0f && bDotDir < 0) -> {
-                    player.state = player.stateDown
+                    player.state = player.stateUp
                 }
                 (aDotDir < 0f && bDotDir >= 0) -> {
-                    player.state = player.stateUp
+                    player.state = player.stateDown
                 }
                 (aDotDir < 0f && bDotDir < 0) -> {
                     player.state = player.stateLeft
                 }
-            }
+            }//when
         }
         return true
     }
@@ -135,9 +134,6 @@ class Joystick(private val player: Player) : InputProcessor {
         // Only render the joystick if the User is touching the screen
         if (isTouched) {
 
-            // Define circle radii and maxDist for the small circle to travel
-            val largeCircleRadius = 100f
-            val smallCircleRadius = 25f
             val maxDist = largeCircleRadius - smallCircleRadius
 
             // Create a Vector2 to store the location of the smallCircle relative to the centre of

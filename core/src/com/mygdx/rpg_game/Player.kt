@@ -27,6 +27,8 @@ class Player(var x: Float = 0f, var y: Float = 0f) {
     // Holds the animation to play when rendering
     private var currentAnimation: Anim
 
+    var maxVelocity = 1.25f
+
     // Player states, two currently not implemented due to lack of animations
     val stateIdle = 0
     val stateLeft = 1
