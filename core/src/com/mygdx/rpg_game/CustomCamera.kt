@@ -2,6 +2,7 @@ package com.mygdx.rpg_game
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.OrthographicCamera
+import com.mygdx.rpg_game.entity.player.Player
 
 /**
  * CustomCamera class that extends OrthographicCamera(). CustomCamera allows for the camera to
@@ -9,16 +10,13 @@ import com.badlogic.gdx.graphics.OrthographicCamera
  *
  * @param vpWidth Width of viewport in pixels
  * @param vpHeight Height of viewport in pixels
- * @param player Reference to Player
  *
  * @constructor Sets the camera to ortho and calls update()
- *
- *
  *
  * @author Joshua Gehl
  */
 
-class CustomCamera(vpWidth: Float, vpHeight: Float, private var player: Player): OrthographicCamera() {
+class CustomCamera(vpWidth: Float, vpHeight: Float): OrthographicCamera() {
 
     // Set camera position, multiply width by screen resolution ratio to properly scale the tiles
     init {
@@ -30,38 +28,36 @@ class CustomCamera(vpWidth: Float, vpHeight: Float, private var player: Player):
         this.update()
     }
 
-    /**
-     * Clamps camera to the bounds [minX], [minY], [maxX], and [maxY]
-     *
-     * @param minX Minimum x value for viewport
-     * @param minY Minimum y value for viewport
-     * @param minY Maximum y value for viewport
-     * @param minY Maximum y value for viewport
-     */
+    fun followPlayer(player: Player, mapWidth: Float, mapHeight: Float) {
+        this.update(player.pos.x, player.pos.y, mapWidth, mapHeight)
+    }
 
-    fun updateCamera(minX: Float, minY: Float, maxX: Float, maxY: Float) {
+    fun update(x: Float, y: Float, mapWidth: Float, mapHeight: Float) {
 
-        if (player.x > this.viewportWidth/2f && player.x < (maxX - this.viewportWidth/2f)) {
-            this.position.x = player.x
+        val vpw2: Float = this.viewportWidth/2f
+        val vph2: Float = this.viewportHeight/2f
+
+        if (x > vpw2 && x < (mapWidth - vpw2)) {
+            this.position.x = x
         }
 
-        if (player.y > this.viewportHeight/2f && player.y < (maxY - this.viewportHeight/2f)) {
-            this.position.y = player.y
+        if (y > vph2 && y < (mapHeight - vph2)) {
+            this.position.y = y
         }
 
-        if(this.position.y - this.viewportHeight/2f < minY){
-            this.position.y = minY + this.viewportHeight/2f
+        if(this.position.y - vph2 < 0){
+            this.position.y = 0 + vph2
         }
-        if(this.position.y + this.viewportHeight/2f > maxY){
-            this.position.y = maxY - this.viewportHeight/2f
+        if(this.position.y + vph2 > mapHeight){
+            this.position.y = mapHeight - vph2
         }
-        if(this.position.x - this.viewportWidth/2f < minX){
-            this.position.x = minX + this.viewportWidth/2f
+        if(this.position.x - vpw2 < 0){
+            this.position.x = 0 + vpw2
         }
-        if(this.position.x + this.viewportWidth/2f > maxX){
-            this.position.x = maxY - this.viewportWidth/2f
+        if(this.position.x + vpw2 > mapWidth){
+            this.position.x = mapWidth - vpw2
         }
 
-        this.update()
+        super.update()
     }
 }
