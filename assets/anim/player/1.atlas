@@ -1,6 +1,6 @@
 
-walkLeft.png
-size: 64, 32
+1.png
+size: 128, 32
 format: RGBA8888
 filter: Nearest, Nearest
 repeat: none
@@ -27,7 +27,7 @@ player
   index: 13
 player
   rotate: false
-  xy: 38, 2
+  xy: 56, 2
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
