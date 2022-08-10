@@ -3,10 +3,11 @@ package com.mygdx.rpg_game.entity.player
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputProcessor
 import com.badlogic.gdx.files.FileHandle
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Vector2
+import com.badlogic.gdx.physics.box2d.World
 import com.mygdx.rpg_game.entity.DynamicEntity
+
 
 /**
  * Player class that extends DynamicEntity to allow for movement. Player class handles the Player's
@@ -14,6 +15,7 @@ import com.mygdx.rpg_game.entity.DynamicEntity
  *
  * @param pos Current x and y position of DynamicEntity
  * @param spritePath FileHandle of folder containing sprite data
+ * @param world World Object
  *
  * @author Joshua Gehl
  */
@@ -35,6 +37,10 @@ class Player(pos: Vector2, spritePath: FileHandle) : DynamicEntity(pos, spritePa
 
     var maxVelocity = 1.25f
 
+    init {
+        this.pos = pos
+    }
+
     /** Update the current animation of the Player based on playerState. */
     private fun updateAnimation() {
         // Sets current animations based on current state
@@ -55,13 +61,21 @@ class Player(pos: Vector2, spritePath: FileHandle) : DynamicEntity(pos, spritePa
      * @author Joshua Gehl
      */
     override fun render(combined: Matrix4) {
+
         this.updateAnimation()
         super.render(combined)
+
+        body.setLinearVelocity(
+            this.velocity.x,
+            this.velocity.y
+        )
+
+        this.pos = body.position
+
         if (isTouched) {
             joystick.render(originalPoint, currentPoint)
         }
     }
-
 
     override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
 
@@ -83,10 +97,12 @@ class Player(pos: Vector2, spritePath: FileHandle) : DynamicEntity(pos, spritePa
         // Set player velocity to 0
         this.velocity = Vector2(0f, 0f)
 
+        body.setLinearVelocity(0f, 0f)
+
         return true
     }
 
-
+    /** @author Joshua Gehl, Travis Day */
     override fun touchDragged(screenX: Int, screenY: Int, pointer: Int): Boolean {
 
         // If finger is being dragged across screen
@@ -107,9 +123,9 @@ class Player(pos: Vector2, spritePath: FileHandle) : DynamicEntity(pos, spritePa
                 (0.5f * (o2cMag - deadzoneRadius) + 0.5f * kotlin.math.abs(o2cMag - deadzoneRadius)) * outerRecip
             }
 
-            Gdx.app.log("Info", "dirVec: $oToCurrent")
+            // Gdx.app.log("Info", "dirVec: $oToCurrent")
 
-            val scalingFactor = 1.0f/o2cMag
+            val scalingFactor = 1.0f/o2cMag * 4000f * Gdx.graphics.deltaTime
             this.velocity.x = oToCurrent.x * scalingFactor * velocityScalar * this.maxVelocity
             this.velocity.y = -oToCurrent.y * scalingFactor * velocityScalar * this.maxVelocity
 
@@ -117,7 +133,6 @@ class Player(pos: Vector2, spritePath: FileHandle) : DynamicEntity(pos, spritePa
             val aDotDir = Vector2(1f, 1f).dot(oToCurrent)
             val bDotDir = Vector2(1f, -1f).dot(oToCurrent)
 
-            /** @author Joshua Gehl, Travis Day */
             when (true) {
                 // + + = moving right
                 (aDotDir >= 0f && bDotDir >= 0) -> {

@@ -5,12 +5,15 @@ import com.badlogic.gdx.files.FileHandle
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Vector2
+import com.badlogic.gdx.physics.box2d.*
+
 
 /**
  * Root class for any sort of Entity created in the game. Loads, stores, and renders animations.
  *
  * @param pos Current x and y position of Entity
  * @param spritePath FileHandle of folder containing sprite data
+ * @param world World object
  *
  * @constructor Assigns [pos] and loads animations
  *
@@ -29,6 +32,15 @@ abstract class Entity(var pos: Vector2, spritePath: FileHandle) {
 
     /** CurrentAnimation */
     protected lateinit var currentAnimation: Anim
+
+    /** Body Def */
+    private lateinit var bodyDef: BodyDef
+
+    /** Body */
+    protected lateinit var body: Body
+
+    /** Fixture Def */
+    private lateinit var fixtureDef: FixtureDef
 
     /**
      * Load all .atlas files from the supplied [FileHandle], create [Anim] objects for each animation,
@@ -63,7 +75,7 @@ abstract class Entity(var pos: Vector2, spritePath: FileHandle) {
         spriteBatch.draw(
             currentAnimation.getNextFrame(),
             this.pos.x - currentAnimation.width/2,
-            this.pos.y - currentAnimation.width/2
+            this.pos.y - currentAnimation.height/2
         )
         spriteBatch.end()
     }
@@ -76,7 +88,29 @@ abstract class Entity(var pos: Vector2, spritePath: FileHandle) {
     open fun dispose() {
         spriteBatch.dispose()
         currentAnimation.dispose()
-        animations.forEach { it.value.dispose()}
+        animations.forEach { it.value.dispose() }
+    }
+
+    fun setPosition(pos: Vector2) {
+        this.pos = pos
+        this.body.position.set(pos)
+    }
+
+    fun setupBody(world: World) {
+        val shape = PolygonShape()
+        shape.setAsBox(currentAnimation.width / 2, currentAnimation.height / 2, Vector2(0f, 0f), 0f)
+
+        bodyDef = BodyDef()
+        bodyDef.type = BodyDef.BodyType.KinematicBody
+
+        bodyDef.position.set(this.pos)
+        body = world.createBody(bodyDef)
+        body.isSleepingAllowed = false
+        fixtureDef = FixtureDef()
+        fixtureDef.shape = shape
+        fixtureDef.density = 1f
+        body.createFixture(shape, 0.0f)
+        shape.dispose()
     }
 
     /** Loads Sprites */
