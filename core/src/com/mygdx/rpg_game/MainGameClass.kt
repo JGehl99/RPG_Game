@@ -4,8 +4,9 @@ import com.badlogic.gdx.ApplicationAdapter
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.audio.Music
-import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.ScreenUtils
+import com.mygdx.rpg_game.entity.player.Player
 
 
 class MainGameClass : ApplicationAdapter() {
@@ -13,7 +14,6 @@ class MainGameClass : ApplicationAdapter() {
     private lateinit var player: Player
     private lateinit var camera: CustomCamera
     private lateinit var tileMap: TileMap
-    private lateinit var joystick: Joystick
     private lateinit var bgMusic: Music
     private var multiplexer = InputMultiplexer()
 
@@ -28,25 +28,21 @@ class MainGameClass : ApplicationAdapter() {
     override fun create() {
 
         // Create Player object, x and y are spawn coordinates, spawn it 5 tiles left, 5 tiles up
-        player = Player(5f * tileSize, 5f * tileSize)
-
-        // Create Joystick to control player
-        joystick = Joystick(player)
+        player = Player(Vector2(5f * tileSize, 5f * tileSize), Gdx.files.internal("anim/player/"))
 
         // Every input object needs to be added to the multiplexer or else only one input device can
         // exist.
-        joystick.addInputProcessors(multiplexer)
+        multiplexer.addProcessor(player)
         Gdx.input.inputProcessor = multiplexer
 
         // Create CustomCamera, display the # of visible tiles specified above
         camera = CustomCamera(
             tileSize * visibleTilesWidth,
-            tileSize * visibleTilesHeight,
-            player
+            tileSize * visibleTilesHeight
         )
 
         // Create TileMap
-        tileMap = TileMap("maps/test_map.tmx", camera)
+        tileMap = TileMap("maps/test_map.tmx")
 
         // Load and play background music
         bgMusic = Gdx.audio.newMusic(Gdx.files.internal("bg_music.mp3"))
@@ -60,17 +56,14 @@ class MainGameClass : ApplicationAdapter() {
         // Clear screen
         ScreenUtils.clear(0.0f, 0.0f, 0.0f, 0.0f)
 
-        // Update camera position, includes clamping the camera viewport to the map
-        camera.updateCamera(0f, 0f, tileMap.mapWidth, tileMap.mapHeight)
+        // Center camera on player, includes clamping the camera viewport to the maps
+        camera.followPlayer(player, tileMap.mapWidth, tileMap.mapHeight)
 
         // Render tileMap
-        tileMap.render()
+        tileMap.render(camera)
 
-        // Update Player, pass camera projection view matrix to function
-        player.update(camera.combined)
-
-        // Render joystick
-        joystick.render()
+        // Render player, pass camera projection view matrix to function
+        player.render(camera.combined)
     }
 
     // Dispose of any unneeded assets on stop

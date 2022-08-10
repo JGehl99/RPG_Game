@@ -4,6 +4,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer
 import com.badlogic.gdx.maps.tiled.TmxMapLoader
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer
+import com.badlogic.gdx.math.Matrix4
 
 /**
  *
@@ -11,7 +12,6 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer
  * such as width, height, and tileSize.
  *
  * @param filepath Path to .tmx file
- * @param camera Reference to [CustomCamera]
  *
  * @constructor Gets a layer from the tiledMap and retrieves map width and height in pixels.
  *
@@ -19,7 +19,7 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer
  */
 
 
-class TileMap(filepath: String, private var camera: CustomCamera) {
+class TileMap(filepath: String) {
 
     // Load in the map from a file
     private var tiledMap: TiledMap = TmxMapLoader().load(filepath)
@@ -41,7 +41,7 @@ class TileMap(filepath: String, private var camera: CustomCamera) {
     }
 
     // Render function to render map
-    fun render() {
+    fun render(camera: CustomCamera) {
         tiledMapRenderer.setView(camera)
         tiledMapRenderer.render()
     }
