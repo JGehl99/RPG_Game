@@ -5,6 +5,16 @@ import com.badlogic.gdx.graphics.g2d.Animation
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 
+/**
+ * [Animation] wrapper class. Simplifies loading a TextureAtlas and Animation.
+ *
+ * @param path Asset path to Animation files
+ * @param fps Frame rate of Animation
+ *
+ * @constructor Defines width and height of the Animation in pixels.
+ *
+ * @author Joshua Gehl
+ */
 class Anim (path: String, fps: Float){
 
     // TextureAtlas holds the animations files
@@ -23,12 +33,20 @@ class Anim (path: String, fps: Float){
         height = textureAtlas.regions[0].regionHeight.toFloat()
     }
 
+    /**
+     * Returns the next frame at time elapsedTime + deltaTime.
+     *
+     * @return Returns the next frame of the animation
+     *
+     * @author Joshua Gehl
+     */
     fun getNextFrame(): TextureRegion? {
         // Update elapsedTime and return current animation frame
         elapsedTime += Gdx.graphics.deltaTime
         return animation.getKeyFrame(elapsedTime,true)
     }
 
+    /** Dispose of any objects that are no longer required */
     fun dispose(){
         textureAtlas.dispose()
     }

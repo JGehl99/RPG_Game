@@ -18,7 +18,6 @@ import com.mygdx.rpg_game.entity.player.Player
 
 class CustomCamera(vpWidth: Float, vpHeight: Float): OrthographicCamera() {
 
-    // Set camera position, multiply width by screen resolution ratio to properly scale the tiles
     init {
         this.setToOrtho(
             false,
@@ -28,10 +27,30 @@ class CustomCamera(vpWidth: Float, vpHeight: Float): OrthographicCamera() {
         this.update()
     }
 
+    /**
+     * Calls [update] using the players coordinates
+     *
+     * @param player Player object
+     * @param mapWidth Width of the map
+     * @param mapHeight Height of the map
+     *
+     * @author Joshua Gehl
+     */
     fun followPlayer(player: Player, mapWidth: Float, mapHeight: Float) {
         this.update(player.pos.x, player.pos.y, mapWidth, mapHeight)
     }
 
+    /**
+     * Moves the camera to x, y, but clamps the viewport to the edges of the map. This prevents
+     * the camera from extending past the map edge and showing black screen.
+     *
+     * @param x x position of camera
+     * @param y y position of camera
+     * @param mapWidth Width of the map
+     * @param mapHeight Height of the map
+     *
+     * @author Joshua Gehl
+     */
     fun update(x: Float, y: Float, mapWidth: Float, mapHeight: Float) {
 
         val vpw2: Float = this.viewportWidth/2f

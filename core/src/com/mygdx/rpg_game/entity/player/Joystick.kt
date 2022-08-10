@@ -6,9 +6,22 @@ import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Vector2
 
+/**
+ * Joystick class to render a joystick on the screen when the User touches the screen.
+ *
+ * @author Joshua Gehl
+ */
+
 class Joystick{
 
-    // Render function to draw joystick on screen
+    /**
+     * Renders two circles on the screen where the player touches that simulate a on-screen joystick.
+     *
+     * @param originalPoint First point touched by User
+     * @param currentPoint Current point touched by User
+     *
+     * @author Joshua Gehl
+     */
     fun render(originalPoint: Vector2, currentPoint: Vector2) {
 
         val shapeRenderer = ShapeRenderer()

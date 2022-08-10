@@ -40,13 +40,19 @@ class TileMap(filepath: String) {
         mapHeight = layer.height.toFloat() * tileSize
     }
 
-    // Render function to render map
+    /**
+     * Sets the map to be in the [camera]'s view, then renders the [tiledMap].
+     *
+     * @param camera CustomCamera object
+     *
+     * @author Joshua Gehl
+     */
     fun render(camera: CustomCamera) {
         tiledMapRenderer.setView(camera)
         tiledMapRenderer.render()
     }
 
-    // Disposal of assets
+    /** Dispose of any unneeded objects */
     fun dispose() {
         tiledMap.dispose()
         tiledMapRenderer.dispose()

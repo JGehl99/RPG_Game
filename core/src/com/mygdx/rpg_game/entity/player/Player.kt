@@ -7,36 +7,44 @@ import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Vector2
 import com.mygdx.rpg_game.entity.DynamicEntity
 
+/**
+ * Player class that extends DynamicEntity to allow for movement. Player class handles the Player's
+ * states and inputs and adjusts the velocity and animation accordingly.
+ *
+ * @param pos Current x and y position of DynamicEntity
+ * @param spritePath FileHandle of folder containing sprite data
+ *
+ * @author Joshua Gehl
+ */
 class Player(pos: Vector2, spritePath: FileHandle) : DynamicEntity(pos, spritePath),
     InputProcessor {
 
-    // Enum to hold states
-    enum class State {
-        STATE_IDLE,
-        STATE_DOWN,
-        STATE_LEFT,
-        STATE_RIGHT,
-        STATE_UP
-    }
-
-    private var state: State = State.STATE_DOWN     // Current state
+    private var playerState: PlayerState = PlayerState.STATE_DOWN     // Current state
     private var isTouched = false                   // Flag to check if screen is touched
     private var originalPoint: Vector2 = Vector2()  // First xy point that user touched screen
     private var currentPoint: Vector2 = Vector2()   // Currently touched xy point
     private var dirVec: Vector2 = Vector2()         // Direction vec: currentPoint - OriginalPoint
     private val joystick: Joystick = Joystick()     // Class to draw joystick on screen
 
+    /** Update the current animation of the Player based on playerState. */
     private fun updateAnimation() {
         // Sets current animations based on current state
-        currentAnimation = when (state) {
-            State.STATE_IDLE -> animations[State.STATE_IDLE.ordinal]!!
-            State.STATE_DOWN -> animations[State.STATE_DOWN.ordinal]!!
-            State.STATE_LEFT -> animations[State.STATE_LEFT.ordinal]!!
-            State.STATE_RIGHT -> animations[State.STATE_RIGHT.ordinal]!!
-            State.STATE_UP -> animations[State.STATE_UP.ordinal]!!
+        currentAnimation = when (playerState) {
+            PlayerState.STATE_IDLE -> animations[PlayerState.STATE_IDLE.ordinal]!!
+            PlayerState.STATE_DOWN -> animations[PlayerState.STATE_DOWN.ordinal]!!
+            PlayerState.STATE_LEFT -> animations[PlayerState.STATE_LEFT.ordinal]!!
+            PlayerState.STATE_RIGHT -> animations[PlayerState.STATE_RIGHT.ordinal]!!
+            PlayerState.STATE_UP -> animations[PlayerState.STATE_UP.ordinal]!!
         }
     }
 
+    /**
+     * Overridden render function that applies current velocity to DynamicEntity
+     *
+     * @param combined View Projection matrix from CustomCamera
+     *
+     * @author Joshua Gehl
+     */
     override fun render(combined: Matrix4) {
         this.updateAnimation()
         super.render(combined)
@@ -45,7 +53,7 @@ class Player(pos: Vector2, spritePath: FileHandle) : DynamicEntity(pos, spritePa
         }
     }
 
-    // When screen is touched
+
     override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
 
         // Set flag
@@ -68,6 +76,7 @@ class Player(pos: Vector2, spritePath: FileHandle) : DynamicEntity(pos, spritePa
 
         return true
     }
+
 
     override fun touchDragged(screenX: Int, screenY: Int, pointer: Int): Boolean {
 
@@ -93,22 +102,23 @@ class Player(pos: Vector2, spritePath: FileHandle) : DynamicEntity(pos, spritePa
             val aDotDir = Vector2(1f, 1f).dot(dirVec)
             val bDotDir = Vector2(1f, -1f).dot(dirVec)
 
-            // + + = moving right
-            // + - = moving down
-            // - + = moving up
-            // - - = moving left
+            /** @author Joshua Gehl, Travis Day */
             when (true) {
+                // + + = moving right
                 (aDotDir >= 0f && bDotDir >= 0) -> {
-                    this.state = State.STATE_RIGHT
+                    this.playerState = PlayerState.STATE_RIGHT
                 }
+                // + - = moving down
                 (aDotDir >= 0f && bDotDir < 0) -> {
-                    this.state = State.STATE_DOWN
+                    this.playerState = PlayerState.STATE_DOWN
                 }
+                // - + = moving up
                 (aDotDir < 0f && bDotDir >= 0) -> {
-                    this.state = State.STATE_UP
+                    this.playerState = PlayerState.STATE_UP
                 }
+                // - - = moving left
                 (aDotDir < 0f && bDotDir < 0) -> {
-                    this.state = State.STATE_LEFT
+                    this.playerState = PlayerState.STATE_LEFT
                 }
             }
         }
@@ -118,19 +128,15 @@ class Player(pos: Vector2, spritePath: FileHandle) : DynamicEntity(pos, spritePa
     override fun keyDown(keycode: Int): Boolean {
         return true
     }
-
     override fun keyUp(keycode: Int): Boolean {
         return true
     }
-
     override fun keyTyped(character: Char): Boolean {
         return true
     }
-
     override fun mouseMoved(screenX: Int, screenY: Int): Boolean {
         return true
     }
-
     override fun scrolled(amountX: Float, amountY: Float): Boolean {
         return true
     }

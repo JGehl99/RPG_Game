@@ -8,7 +8,11 @@ import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.ScreenUtils
 import com.mygdx.rpg_game.entity.player.Player
 
-
+/**
+ * Main Game class, creates all objects, renders all objects, disposes of all objects.
+ *
+ * @author Joshua Gehl
+ */
 class MainGameClass : ApplicationAdapter() {
 
     private lateinit var player: Player
