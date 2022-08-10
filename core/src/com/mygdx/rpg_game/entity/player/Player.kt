@@ -3,6 +3,7 @@ package com.mygdx.rpg_game.entity.player
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputProcessor
 import com.badlogic.gdx.files.FileHandle
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Vector2
 import com.mygdx.rpg_game.entity.DynamicEntity
@@ -23,8 +24,16 @@ class Player(pos: Vector2, spritePath: FileHandle) : DynamicEntity(pos, spritePa
     private var isTouched = false                   // Flag to check if screen is touched
     private var originalPoint: Vector2 = Vector2()  // First xy point that user touched screen
     private var currentPoint: Vector2 = Vector2()   // Currently touched xy point
-    private var dirVec: Vector2 = Vector2()         // Direction vec: currentPoint - OriginalPoint
+    private var oToCurrent: Vector2 = Vector2()         // Direction vec: currentPoint - OriginalPoint
     private val joystick: Joystick = Joystick()     // Class to draw joystick on screen
+    private var largeCircleRadius = 200f
+    private var smallCircleRadius = 25f
+
+    private var deadzoneThreshold = 0.3f
+    private var deadzoneRadius = deadzoneThreshold * largeCircleRadius
+    private var outerRecip = 1.0f / (largeCircleRadius - deadzoneRadius)
+
+    var maxVelocity = 1.25f
 
     /** Update the current animation of the Player based on playerState. */
     private fun updateAnimation() {
@@ -87,20 +96,26 @@ class Player(pos: Vector2, spritePath: FileHandle) : DynamicEntity(pos, spritePa
             currentPoint = Vector2(screenX.toFloat(), screenY.toFloat())
 
             // Create direction Vector2 between origPoint and currentPoint
-            dirVec = currentPoint.cpy().sub(originalPoint)
+            oToCurrent = currentPoint.cpy().sub(originalPoint)
 
-            // Normalize vector
-            dirVec.nor()
+            val o2cMag = oToCurrent.len()
 
-            Gdx.app.log("Info", "dirVec: $dirVec")
+            //generate velocity scalar
+            val velocityScalar: Float = if(o2cMag > largeCircleRadius){
+                1f
+            }else{
+                (0.5f * (o2cMag - deadzoneRadius) + 0.5f * kotlin.math.abs(o2cMag - deadzoneRadius)) * outerRecip
+            }
 
-            // Scale direction vec and adjust the player's velocity accordingly
-            this.velocity.x = dirVec.x * 1.25f
-            this.velocity.y = -dirVec.y * 1.25f
+            Gdx.app.log("Info", "dirVec: $oToCurrent")
+
+            val scalingFactor = 1.0f/o2cMag
+            this.velocity.x = oToCurrent.x * scalingFactor * velocityScalar * this.maxVelocity
+            this.velocity.y = -oToCurrent.y * scalingFactor * velocityScalar * this.maxVelocity
 
             // Gets dot product of direVec with diagonal vector in an X shape at center of largeCircle
-            val aDotDir = Vector2(1f, 1f).dot(dirVec)
-            val bDotDir = Vector2(1f, -1f).dot(dirVec)
+            val aDotDir = Vector2(1f, 1f).dot(oToCurrent)
+            val bDotDir = Vector2(1f, -1f).dot(oToCurrent)
 
             /** @author Joshua Gehl, Travis Day */
             when (true) {

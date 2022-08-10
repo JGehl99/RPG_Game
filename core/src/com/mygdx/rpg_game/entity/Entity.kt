@@ -21,9 +21,6 @@ import com.badlogic.gdx.math.Vector2
 
 abstract class Entity(var pos: Vector2, spritePath: FileHandle) {
 
-    /** Loads Sprites */
-    init { loadAnimations(spritePath) }
-
     /** HashMap containing Anim objects */
     protected var animations: HashMap<Int, Anim> = HashMap()
 
@@ -80,5 +77,10 @@ abstract class Entity(var pos: Vector2, spritePath: FileHandle) {
         spriteBatch.dispose()
         currentAnimation.dispose()
         animations.forEach { it.value.dispose()}
+    }
+
+    /** Loads Sprites */
+    init {
+        loadAnimations(spritePath)
     }
 }
