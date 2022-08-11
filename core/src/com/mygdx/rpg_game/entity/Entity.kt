@@ -101,7 +101,8 @@ abstract class Entity(var pos: Vector2, spritePath: FileHandle) {
         shape.setAsBox(currentAnimation.width / 2, currentAnimation.height / 2, Vector2(0f, 0f), 0f)
 
         bodyDef = BodyDef()
-        bodyDef.type = BodyDef.BodyType.KinematicBody
+        bodyDef.type = BodyDef.BodyType.DynamicBody
+        bodyDef.fixedRotation = true
 
         bodyDef.position.set(this.pos)
         body = world.createBody(bodyDef)

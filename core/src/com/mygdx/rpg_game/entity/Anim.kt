@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g2d.Animation
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.graphics.g2d.TextureRegion
+import com.badlogic.gdx.utils.TimeUtils
 
 /**
  * [Animation] wrapper class. Simplifies loading a TextureAtlas and Animation.
@@ -21,7 +22,7 @@ class Anim (path: String, fps: Float){
     private var textureAtlas: TextureAtlas = TextureAtlas(Gdx.files.internal(path))
     // Create animation from textureAtlas at set fps
     private var animation: Animation<TextureRegion> = Animation(fps, textureAtlas.regions)
-    // elapsed to keep track of current frame
+
     private var elapsedTime: Float = 0f
 
     var width: Float = 0f
@@ -41,7 +42,6 @@ class Anim (path: String, fps: Float){
      * @author Joshua Gehl
      */
     fun getNextFrame(): TextureRegion? {
-        // Update elapsedTime and return current animation frame
         elapsedTime += Gdx.graphics.deltaTime
         return animation.getKeyFrame(elapsedTime,true)
     }

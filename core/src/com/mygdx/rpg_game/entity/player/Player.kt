@@ -94,9 +94,6 @@ class Player(pos: Vector2, spritePath: FileHandle) : DynamicEntity(pos, spritePa
         // Reset flag
         isTouched = false
 
-        // Set player velocity to 0
-        this.velocity = Vector2(0f, 0f)
-
         body.setLinearVelocity(0f, 0f)
 
         return true
@@ -126,8 +123,11 @@ class Player(pos: Vector2, spritePath: FileHandle) : DynamicEntity(pos, spritePa
             // Gdx.app.log("Info", "dirVec: $oToCurrent")
 
             val scalingFactor = 1.0f/o2cMag * 4000f * Gdx.graphics.deltaTime
-            this.velocity.x = oToCurrent.x * scalingFactor * velocityScalar * this.maxVelocity
-            this.velocity.y = -oToCurrent.y * scalingFactor * velocityScalar * this.maxVelocity
+
+            val vx = oToCurrent.x * scalingFactor * velocityScalar * this.maxVelocity
+            val vy = -oToCurrent.y * scalingFactor * velocityScalar * this.maxVelocity
+
+            this.body.setLinearVelocity(vx, vy)
 
             // Gets dot product of direVec with diagonal vector in an X shape at center of largeCircle
             val aDotDir = Vector2(1f, 1f).dot(oToCurrent)

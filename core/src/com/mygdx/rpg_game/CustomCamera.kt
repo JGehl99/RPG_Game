@@ -36,7 +36,7 @@ class CustomCamera(vpWidth: Float, vpHeight: Float): OrthographicCamera() {
      *
      * @author Joshua Gehl
      */
-    fun followPlayer(player: Player, mapWidth: Float, mapHeight: Float) {
+    fun followPlayer(player: com.mygdx.rpg_game.ecs.entity.Player, mapWidth: Float, mapHeight: Float) {
         this.update(player.pos.x, player.pos.y, mapWidth, mapHeight)
     }
 
