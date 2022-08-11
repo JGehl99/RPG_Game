@@ -44,9 +44,11 @@ class MainGameClass : ApplicationAdapter() {
 
         // Create Player object, x and y are spawn coordinates
         player = com.mygdx.rpg_game.ecs.entity.Player(Vector2(5*16f, 5*16f), "anim/player/player_anim.properties")
+        player.loadAnimations()
         player.setupBody(world)
 
         rock = Rock(Vector2(7*16f, 7*16f), "anim/sprite/rock.png")
+        rock.setupBody(world)
 
         // Every input object needs to be added to the multiplexer or else only one input device can
         // exist.

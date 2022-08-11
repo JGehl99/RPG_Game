@@ -14,6 +14,14 @@ import com.badlogic.gdx.math.Vector2
 
 class Joystick{
 
+    private val shapeRenderer = ShapeRenderer()
+    private val largeCircleRadius = 100f
+    private val smallCircleRadius = 25f
+    private val maxDist = largeCircleRadius - smallCircleRadius
+
+    private lateinit var relativeSmallCircleVector2: Vector2
+
+
     /**
      * Renders two circles on the screen where the player touches that simulate a on-screen joystick.
      *
@@ -24,20 +32,12 @@ class Joystick{
      */
     fun render(originalPoint: Vector2, currentPoint: Vector2) {
 
-        val shapeRenderer = ShapeRenderer()
-
-        // Define circle radii and maxDist for the small circle to travel
-        val largeCircleRadius = 100f
-        val smallCircleRadius = 25f
-        val maxDist = largeCircleRadius - smallCircleRadius
-
         // Create a Vector2 to store the location of the smallCircle relative to the centre of
         // the largeCircle, clamp from -maxDist to maxDist
-        val relativeSmallCircleVector2 =
-            Vector2(currentPoint.x - originalPoint.x, currentPoint.y - originalPoint.y).clamp(
-                -maxDist,
-                maxDist
-            )
+        relativeSmallCircleVector2 = Vector2(
+            currentPoint.x - originalPoint.x,
+            currentPoint.y - originalPoint.y
+        ).clamp(-maxDist, maxDist)
 
         // Enable blending to allow for transparent circles
         Gdx.gl.glEnable(GL20.GL_BLEND)
@@ -59,5 +59,10 @@ class Joystick{
         )
         shapeRenderer.end()
         Gdx.gl.glDisable(GL20.GL_BLEND)
+
+    }
+
+    fun dispose() {
+        shapeRenderer.dispose()
     }
 }

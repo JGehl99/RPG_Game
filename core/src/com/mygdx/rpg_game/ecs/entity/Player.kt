@@ -40,10 +40,6 @@ class Player(override var pos: Vector2, override var animConfig: String) :
 
     var maxVelocity = 1.25f
 
-    init {
-        loadAnimations()
-    }
-
     /** Update the current animation of the Player based on playerState and return the current frame */
     override fun getCurrentFrame(): TextureRegion? {
         currentAnimation = when (playerState) {
@@ -97,12 +93,15 @@ class Player(override var pos: Vector2, override var animConfig: String) :
         this.pos = this.body.position
 
         spriteBatch.projectionMatrix = camera.combined
+
         spriteBatch.begin()
+
         spriteBatch.draw(
             getCurrentFrame(),
             this.pos.x - currentAnimation.width/2,
             this.pos.y - currentAnimation.height/2
         )
+
         spriteBatch.end()
 
         joystick.render(originalPoint, currentPoint)
@@ -124,8 +123,6 @@ class Player(override var pos: Vector2, override var animConfig: String) :
 
         // Set player velocity to 0
         this.body.setLinearVelocity(0f, 0f)
-
-        body.setLinearVelocity(0f, 0f)
 
         return true
     }
@@ -194,5 +191,6 @@ class Player(override var pos: Vector2, override var animConfig: String) :
         this.dispose()
         spriteBatch.dispose()
         animations.forEach { it.value.dispose() }
+        joystick.dispose()
     }
 }
