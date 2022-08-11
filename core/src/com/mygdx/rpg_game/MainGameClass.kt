@@ -56,7 +56,7 @@ class MainGameClass : ApplicationAdapter() {
         )
 
         // Create TileMap
-        tileMap = TileMap("maps/test_map.tmx")
+        tileMap = TileMap("maps/test_map.tmx", world)
 
         // Load and play background music
         bgMusic = Gdx.audio.newMusic(Gdx.files.internal("bg_music.mp3"))

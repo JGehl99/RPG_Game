@@ -13,7 +13,6 @@ import com.badlogic.gdx.physics.box2d.*
  *
  * @param pos Current x and y position of Entity
  * @param spritePath FileHandle of folder containing sprite data
- * @param world World object
  *
  * @constructor Assigns [pos] and loads animations
  *
@@ -101,7 +100,8 @@ abstract class Entity(var pos: Vector2, spritePath: FileHandle) {
         shape.setAsBox(currentAnimation.width / 2, currentAnimation.height / 2, Vector2(0f, 0f), 0f)
 
         bodyDef = BodyDef()
-        bodyDef.type = BodyDef.BodyType.KinematicBody
+        bodyDef.type = BodyDef.BodyType.DynamicBody
+        bodyDef.fixedRotation = true
 
         bodyDef.position.set(this.pos)
         body = world.createBody(bodyDef)
