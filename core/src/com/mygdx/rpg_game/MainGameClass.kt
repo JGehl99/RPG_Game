@@ -8,7 +8,8 @@ import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer
 import com.badlogic.gdx.physics.box2d.World
 import com.badlogic.gdx.utils.ScreenUtils
-import com.mygdx.rpg_game.entity.player.Player
+import com.mygdx.rpg_game.ecs.entity.Rock
+import com.mygdx.rpg_game.map.TileMap
 
 
 /**
@@ -18,7 +19,8 @@ import com.mygdx.rpg_game.entity.player.Player
  */
 class MainGameClass : ApplicationAdapter() {
 
-    private lateinit var player: Player
+    private lateinit var player: com.mygdx.rpg_game.ecs.entity.Player
+    private lateinit var rock: Rock
     private lateinit var camera: CustomCamera
     private lateinit var tileMap: TileMap
     private lateinit var bgMusic: Music
@@ -41,8 +43,12 @@ class MainGameClass : ApplicationAdapter() {
         debugRenderer = Box2DDebugRenderer()
 
         // Create Player object, x and y are spawn coordinates
-        player = Player(Vector2(5*16f, 5*16f), Gdx.files.internal("anim/player/"))
+        player = com.mygdx.rpg_game.ecs.entity.Player(Vector2(5*16f, 5*16f), "anim/player/prop.properties")
+        player.loadAnimations()
+        player.setupBody(world)
 
+        rock = Rock(Vector2(7*16f, 7*16f), "anim/sprite/rock.png")
+        rock.setupBody(world)
 
         // Every input object needs to be added to the multiplexer or else only one input device can
         // exist.
@@ -62,8 +68,6 @@ class MainGameClass : ApplicationAdapter() {
         bgMusic = Gdx.audio.newMusic(Gdx.files.internal("bg_music.mp3"))
         bgMusic.isLooping = true
         bgMusic.play()
-
-        player.setupBody(world)
     }
 
     // Render class called once every frame
@@ -78,8 +82,10 @@ class MainGameClass : ApplicationAdapter() {
         // Render tileMap
         tileMap.render(camera)
 
+        rock.render(camera)
+
         // Render player, pass camera projection view matrix to function
-        player.render(camera.combined)
+        player.render(camera)
 
         debugRenderer.render(world, camera.combined)
         world.step(1/60f, 8, 3)

@@ -1,4 +1,4 @@
-package com.mygdx.rpg_game.entity.player
+package com.mygdx.rpg_game.ecs.state
 
 /**
  * Enum class to store Player states.

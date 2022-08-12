@@ -2,7 +2,6 @@ package com.mygdx.rpg_game
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.OrthographicCamera
-import com.mygdx.rpg_game.entity.player.Player
 
 /**
  * CustomCamera class that extends OrthographicCamera(). CustomCamera allows for the camera to
@@ -36,7 +35,7 @@ class CustomCamera(vpWidth: Float, vpHeight: Float): OrthographicCamera() {
      *
      * @author Joshua Gehl
      */
-    fun followPlayer(player: Player, mapWidth: Float, mapHeight: Float) {
+    fun followPlayer(player: com.mygdx.rpg_game.ecs.entity.Player, mapWidth: Float, mapHeight: Float) {
         this.update(player.pos.x, player.pos.y, mapWidth, mapHeight)
     }
 
