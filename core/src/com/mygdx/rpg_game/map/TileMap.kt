@@ -1,4 +1,4 @@
-package com.mygdx.rpg_game
+package com.mygdx.rpg_game.map
 
 import com.badlogic.gdx.maps.objects.EllipseMapObject
 import com.badlogic.gdx.maps.objects.PolygonMapObject
@@ -13,6 +13,7 @@ import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.BodyDef
 import com.badlogic.gdx.physics.box2d.PolygonShape
 import com.badlogic.gdx.physics.box2d.World
+import com.mygdx.rpg_game.CustomCamera
 
 
 /**

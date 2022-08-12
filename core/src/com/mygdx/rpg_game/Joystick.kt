@@ -1,4 +1,4 @@
-package com.mygdx.rpg_game.entity.player
+package com.mygdx.rpg_game
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color

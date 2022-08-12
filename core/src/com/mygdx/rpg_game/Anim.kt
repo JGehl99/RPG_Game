@@ -1,4 +1,4 @@
-package com.mygdx.rpg_game.entity
+package com.mygdx.rpg_game
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g2d.Animation

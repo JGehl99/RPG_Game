@@ -8,9 +8,9 @@ import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.*
 import com.mygdx.rpg_game.CustomCamera
 import com.mygdx.rpg_game.ecs.component.*
-import com.mygdx.rpg_game.entity.Anim
-import com.mygdx.rpg_game.entity.player.Joystick
-import com.mygdx.rpg_game.entity.player.PlayerState
+import com.mygdx.rpg_game.Anim
+import com.mygdx.rpg_game.Joystick
+import com.mygdx.rpg_game.ecs.state.PlayerState
 import java.util.*
 
 class Player(override var pos: Vector2, override var animConfig: String) :
@@ -60,7 +60,9 @@ class Player(override var pos: Vector2, override var animConfig: String) :
 
         properties.forEach { entry ->
             //Gdx.app.log("Properties", "${entry.key}, ${entry.value}")
-            animations[try {PlayerState.valueOf(entry.key as String)} catch (e: IllegalArgumentException ){PlayerState.STATE_IDLE}] = Anim(entry.value as String, 1/10f)
+            animations[try {
+                PlayerState.valueOf(entry.key as String)} catch (e: IllegalArgumentException ){
+                PlayerState.STATE_IDLE}] = Anim(entry.value as String, 1/10f)
         }
         currentAnimation = animations[PlayerState.STATE_IDLE]!!
     }

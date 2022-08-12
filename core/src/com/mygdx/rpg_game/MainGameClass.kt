@@ -9,7 +9,7 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer
 import com.badlogic.gdx.physics.box2d.World
 import com.badlogic.gdx.utils.ScreenUtils
 import com.mygdx.rpg_game.ecs.entity.Rock
-import com.mygdx.rpg_game.entity.player.Player
+import com.mygdx.rpg_game.map.TileMap
 
 
 /**
@@ -43,7 +43,7 @@ class MainGameClass : ApplicationAdapter() {
         debugRenderer = Box2DDebugRenderer()
 
         // Create Player object, x and y are spawn coordinates
-        player = com.mygdx.rpg_game.ecs.entity.Player(Vector2(5*16f, 5*16f), "anim/player/player_anim.properties")
+        player = com.mygdx.rpg_game.ecs.entity.Player(Vector2(5*16f, 5*16f), "anim/player/prop.properties")
         player.loadAnimations()
         player.setupBody(world)
 
